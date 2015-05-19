@@ -1,3 +1,6 @@
+Demo [Without Sentiments](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html)
+
+
 If you are into big data visualization on map, then sooner or later you will face this inevitable question ...*Can we show all the million+ data points  on the map?*
 
 Well I have been haunted by this query for quite some time unless I came up with a solution.
@@ -76,4 +79,4 @@ The elastic query shown under operates on the map bounds(top left, bottom right)
 }
 ```
 For client side read comments in the code [Refer](https://github.com/cyrilcherian/million-points-on-map/blob/master/simpleMap.html#L24-103).
-Demo [Without Sentiments](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html)
+
