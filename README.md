@@ -1,4 +1,4 @@
-Demo [Without Sentiments](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html)
+Demo [Example1](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html)
 
 
 If you are into big data visualization on map, then sooner or later you will face this inevitable question ...*Can we show all the million+ data points  on the map?*
