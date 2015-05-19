@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Full Canvas</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/marker-cluster-default.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.ie.css" />
+    <![endif]-->
+    <style>
+        html, body, #map { height: 100%; padding: 0; margin: 0;}
+    </style>
+    <script src="lib/leaflet.js"></script>
+    <script src="lib/elasticsearch.js"></script>
+    <script src="lib/ngeohash.js"></script>
+    <script src="lib/leaflet-marker-cluster.js"></script>
+    <script src="lib/parse-1.2.13.min.js"></script>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    map = L.map('map',{minZoom:3});
+    var mapboxTiles = L.tileLayer('https://{s}.tiles.mapbox.com/v3/{mapid}/{z}/{x}/{y}.png', {
+    mapid: 'cyrilcherian.cc320505'
+    }).addTo(map);
+    map.on('load', function(e){search()});
+    map.setView([22.295006, 78.945313], 3);
+    map.on('zoomend dragend',function(e){search();});
+    markers = L.markerClusterGroup({
+    chunkedLoading: true,
+    spiderfyOnMaxZoom: false,
+    showCoverageOnHover: true,
+    chunkProgress: updateProgressBar,
+    iconCreateFunction: function(cluster) {
+        var markers = cluster.getAllChildMarkers();
+        var markerCount = 0;
+        var markerSentiment = 0;
+        markers.forEach(function(m){markerCount = markerCount + m.count; markerSentiment = markerSentiment + m.sentiment});
+        var avg = Math.ceil(markerSentiment/cluster.getAllChildMarkers().length);
+
+        return new L.DivIcon({ html: '<div class=" clustergroup'+avg+' leaflet-marker-icon marker-cluster marker-cluster-medium leaflet-zoom-animated leaflet-clickable" tabindex="0" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; z-index: 233;"><div><span>'+markerCount+'</span></div></div>' });
+        }
+    });
+    map.addLayer(markers);
+    function updateProgressBar(processed, total, elapsed, layersArray) {
+            /*if (elapsed > 1000) {
+                // if it takes more than a second to load, display the progress bar:
+                progress.style.display = 'block';
+                progressBar.style.width = Math.round(processed/total*100) + '%';
+            }
+
+            if (processed === total) {
+                // all markers processed - hide the progress bar:
+                progress.style.display = 'none';
+            }*/
+    }
+    function loadPoints(){
+        var b = map.getBounds();
+        var zoom = 3;
+        if(map.getZoom() >= 5 && map.getZoom() <= 8){
+            zoom =4;
+        }
+        else if(map.getZoom() >= 9 && map.getZoom() <= 11){
+            zoom =5;
+        }
+        else if(map.getZoom() >= 12 && map.getZoom() <= 14){
+            zoom =6;
+        }
+        else if(map.getZoom() >= 15 && map.getZoom() <= 17){
+            zoom =7;
+        }
+        else if(map.getZoom() >= 18){
+            zoom =8;
+        }
+
+        client.search ({
+                index: 'points',
+                    body: {
+                            "query": {
+                                "filtered" : {
+                                    "query": {
+                                        "match_all":{}
+                                    },
+                                    "filter":{
+                                        "geo_bounding_box" : {
+                                            "location" : {
+                                                "top_left": {
+                                                    "lat": b.getNorthWest().lat,
+                                                    "lon": b.getNorthWest().lng
+                                                },
+                                                "bottom_right": {
+                                                    "lat": b.getSouthEast().lat,
+                                                    "lon": b.getSouthEast().lng
+                                                }
+                                            }
+                                        }
+                                    }    
+                                }
+                            },
+                            aggs: {
+                                "zoom": {
+                                    "geohash_grid": { 
+                                        "field": "location",
+                                        "precision": zoom
+                                    },aggs: {
+                                        "sentiment_avg": {
+                                           "avg": {
+                                              "field": "sentiment"
+                                           }
+                                        }
+                                    }
+                                 }
+                            }
+
+                    }
+                }).then(function (resp) {
+                    markers.clearLayers();
+                    makePoints(resp.aggregations.zoom.buckets);
+                }, function (err) {
+                    console.trace(err.message);
+                });
+    }
+    function makePoints(aggs){
+        points = {};
+
+        var markerList = [];
+        aggs.forEach(function(agg, index){
+            //var obj = {};
+            //obj.id = guid();
+            //var bounds = geohash.decode_bbox(agg.key);
+            var center = geohash.decode (agg.key);
+            var avg = Math.ceil(agg.sentiment_avg.value)
+            var myIcon = L.divIcon({ html: '<div class="clustergroup'+avg+' leaflet-marker-icon marker-cluster marker-cluster-medium leaflet-zoom-animated leaflet-clickable" tabindex="0" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; z-index: 233;"><div><span>'+agg.doc_count+'</span></div></div>' });
+            var marker = L.marker(new L.LatLng(center.latitude, center.longitude),{icon:myIcon});
+            marker.count = agg.doc_count;
+            marker.sentiment = agg.sentiment_avg.value;
+            marker.bindPopup(''+agg.doc_count);
+            markerList.push(marker);
+             /*obj.min = min;
+             obj.max = max;
+             obj.center = center;
+             obj.count = agg.doc_count;
+             points[obj.id] = obj;        */
+        });
+        markers.addLayers(markerList);
+        //send the points to worker
+        /*var _worker = new Worker('lib/merger.js');
+        var d = {};
+        d.points1 = points;
+        d.zoom = map.getZoom();
+        _worker.postMessage(d);
+        _worker.addEventListener('message', function(e) {
+            console.log(e);
+            var min = e.data.point.min;
+            var max = e.data.point.max;
+            var rect = L.rectangle([min,max]).addTo(map).bindPopup(''+ e.data.point.count);
+            rects.push(rect);
+        }, false);        */
+    }
+   count = 0; 
+   function makePoints11(){
+        count ++;
+        //for(i = count; i < limit; i++){
+            var city = cities[count];
+            var point = {lat: city.slat, lon: city.slon};
+            client.index({
+              index: 'points',
+              type: 'point',
+              body: {
+                "location": point,
+                "sentiment": Math.floor((Math.random() * 10))
+              }
+            }, 
+            function (err, resp) {
+                if(!err){
+                    makePoints11();
+                    console.log(count);
+                }
+            });
+        //}
+   }
+   
+    function search(){
+        var b = map.getBounds();
+        var b1 = {
+            "trlat": b.getNorthWest().lat,
+            "trlon": b.getNorthWest().lng, 
+            "bllat": b.getSouthEast().lat, 
+            "bllon": b.getSouthEast().lng
+        }
+        var zoom = 3;
+        if(map.getZoom() >= 5 && map.getZoom() <= 8){
+            zoom =4;
+        }
+        else if(map.getZoom() >= 9 && map.getZoom() <= 11){
+            zoom =5;
+        }
+        else if(map.getZoom() >= 12 && map.getZoom() <= 14){
+            zoom =6;
+        }
+        else if(map.getZoom() >= 15 && map.getZoom() <= 17){
+            zoom =7;
+        }
+        else if(map.getZoom() >= 18){
+            zoom =8;
+        }
+
+        var d = {
+                "bounds": b1,
+                "zoom": zoom
+              };
+        Parse.initialize("OjImjwifOD5EladE5585UAS3CJGy7ednZjucd5SE", "6CE4fybH3Cg4fiqbvxsAE8osmX6MsEIWou0Kudr9");
+        Parse.Cloud.run('search', d, {
+          success: function(resp) {
+            markers.clearLayers();
+            var r = JSON.parse(resp)
+            makePoints(r.aggregations.zoom.buckets);
+          },
+          error: function(error) {
+            console.log(error)
+          }
+        });
+   }
+   function guid() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+                   .toString(16)
+                   .substring(1);
+      }
+      var k = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+      return k;
+    }
+
+</script>
+</body>
+</html>
