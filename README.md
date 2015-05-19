@@ -75,5 +75,5 @@ The elastic query shown under operates on the map bounds(top left, bottom right)
    }
 }
 ```
-For client side read comments in the code.
-Demo [Without Sentiments](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html#L24-103)
+For client side read comments in the code [Refer](https://github.com/cyrilcherian/million-points-on-map/blob/master/simpleMap.html#L24-103).
+Demo [Without Sentiments](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html)
