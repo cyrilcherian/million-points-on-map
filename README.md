@@ -1,3 +1,4 @@
+# Million Points On Map
 Demo [Example1](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html)
 
 
