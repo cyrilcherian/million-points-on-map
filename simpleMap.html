@@ -24,7 +24,7 @@
     map = L.map('map',{minZoom:3});
     var mapboxTiles = L.tileLayer('https://{s}.tiles.mapbox.com/v3/{mapid}/{z}/{x}/{y}.png', {
     mapid: 'cyrilc.ncame3jk',
-    accessToken: 'pk.eyJ1IjoiY3lyaWxjIiwiYSI6IjljNGJhYWQzODhhMTZlYmE0YjdkNmU0MWE1MGFjOWQwIn0.bDuNHNgkCb15a_JpgX4AWg'
+    token: 'pk.eyJ1IjoiY3lyaWxjIiwiYSI6IjljNGJhYWQzODhhMTZlYmE0YjdkNmU0MWE1MGFjOWQwIn0.bDuNHNgkCb15a_JpgX4AWg'
     }).addTo(map);
     map.on('load', function(e){search()});
     map.setView([22.295006, 78.945313], 3);
