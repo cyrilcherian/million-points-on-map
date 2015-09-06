@@ -22,10 +22,8 @@
 <div id="map"></div>
 <script>
     map = L.map('map',{minZoom:3});
-    var mapboxTiles = L.tileLayer('https://{s}.tiles.mapbox.com/v3/{mapid}/{z}/{x}/{y}.png', {
-    mapid: 'cyrilc.ncame3jk',
-    token: 'pk.eyJ1IjoiY3lyaWxjIiwiYSI6IjljNGJhYWQzODhhMTZlYmE0YjdkNmU0MWE1MGFjOWQwIn0.bDuNHNgkCb15a_JpgX4AWg'
-    }).addTo(map);
+    L.mapbox.accessToken = 'pk.eyJ1IjoiY3lyaWxjIiwiYSI6IjljNGJhYWQzODhhMTZlYmE0YjdkNmU0MWE1MGFjOWQwIn0.bDuNHNgkCb15a_JpgX4AWg';
+    
     map.on('load', function(e){search()});
     map.setView([22.295006, 78.945313], 3);
     map.on('zoomend dragend',function(e){search();});
