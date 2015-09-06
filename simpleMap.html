@@ -17,13 +17,15 @@
     <script src="lib/ngeohash.js"></script>
     <script src="lib/leaflet-marker-cluster.js"></script>
     <script src="lib/parse-1.2.13.min.js"></script>
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
 </head>
 <body>
 <div id="map"></div>
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiY3lyaWxjIiwiYSI6IjljNGJhYWQzODhhMTZlYmE0YjdkNmU0MWE1MGFjOWQwIn0.bDuNHNgkCb15a_JpgX4AWg';
-  map = L.mapbox.map('map', 'mapbox.streets')
-    .setView([40, -74.50], 9);    
+ map = L.mapbox.map('map', 'mapbox.streets')
+    .setView([40, -74.50], 9);  
     map.on('load', function(e){search()});
     map.setView([22.295006, 78.945313], 3);
     map.on('zoomend dragend',function(e){search();});
