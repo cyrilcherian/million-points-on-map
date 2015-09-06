@@ -26,7 +26,7 @@
 			maxZoom: 9,
 			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
 		});
-    map = L.map('map', {center: latlng, zoom: 13, layers: [tiles]});
+    map = L.map('map', { zoom: 13, layers: [tiles]});
     map.on('load', function(e){search()});
     map.setView([22.295006, 78.945313], 3);
     map.on('zoomend dragend',function(e){search();});
