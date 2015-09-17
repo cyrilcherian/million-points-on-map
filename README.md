@@ -1,5 +1,5 @@
 # Million Points On Map
-Demo [Example](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html)
+Demo [Example](http://cyrilcherian.github.io/million-points-on-map/simpleMap.html) - Special thanks to [Bonsai.io](https://bonsai.io/) for hosting the demo cluster
 
 Sentiment Analysis Demo [Example](http://cyrilcherian.github.io/million-points-on-map/myMap.html)
 
