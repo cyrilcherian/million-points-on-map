@@ -226,7 +226,7 @@
 	            "X-Parse-REST-API-Key": "TC3nNk6nae1COCn0bZJ0XE76KBT4F5eR4Pm3gPWR"
 	        }
     	})
-	.done(function(msg) {
+	.done(function(resp) {
 	        markers.clearLayers();
 	        var r = JSON.parse(resp)
 	        makePoints(r.aggregations.zoom.buckets);
