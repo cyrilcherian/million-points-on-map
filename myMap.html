@@ -16,6 +16,7 @@
     <script src="lib/elasticsearch.js"></script>
     <script src="lib/ngeohash.js"></script>
     <script src="lib/leaflet-marker-cluster.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.2.min.js"   integrity="sha256-lZFHibXzMHo3GGeehn1hudTAP3Sc0uKXBXAzHX1sjtk="   crossorigin="anonymous"></script>
     <script src="lib/parse-1.2.13.min.js"></script>
 </head>
 <body>
@@ -213,7 +214,24 @@
                 "bounds": b1,
                 "zoom": zoom
               };
-        Parse.initialize("OjImjwifOD5EladE5585UAS3CJGy7ednZjucd5SE", "6CE4fybH3Cg4fiqbvxsAE8osmX6MsEIWou0Kudr9");
+        $.ajax({
+	        method: "POST",
+	        url: "https://parseapi.back4app.com/functions/search",
+	        data: d,
+	        headers: {
+	            X - Parse - Application - Id: OjImjwifOD5EladE5585UAS3CJGy7ednZjucd5SE,
+	            X - Parse - REST - API - Key: TC3nNk6nae1COCn0bZJ0XE76KBT4F5eR4Pm3gPWR
+	        }
+    	})
+	.done(function(msg) {
+	        markers.clearLayers();
+	        var r = JSON.parse(resp)
+	        makePoints(r.aggregations.zoom.buckets);
+    	})
+    	.fail(function(error) {
+        	console.log(error)
+    	});
+        /*Parse.initialize("OjImjwifOD5EladE5585UAS3CJGy7ednZjucd5SE", "6CE4fybH3Cg4fiqbvxsAE8osmX6MsEIWou0Kudr9");
         Parse.Cloud.run('search', d, {
           success: function(resp) {
             markers.clearLayers();
@@ -223,7 +241,7 @@
           error: function(error) {
             console.log(error)
           }
-        });
+        });*/
    }
    function guid() {
       function s4() {
