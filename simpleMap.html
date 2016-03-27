@@ -90,7 +90,27 @@
                 "bounds": b1,
                 "zoom": zoom
               };
-        Parse.initialize("OjImjwifOD5EladE5585UAS3CJGy7ednZjucd5SE", "6CE4fybH3Cg4fiqbvxsAE8osmX6MsEIWou0Kudr9");
+                $.ajax({
+	        method: "POST",
+	        url: "https://parseapi.back4app.com/functions/search",
+	        data: JSON.stringify(d),
+                dataType: "text",
+	        headers: {
+	            "content-type": "application/json",
+	            "X-Parse-Application-Id": "OjImjwifOD5EladE5585UAS3CJGy7ednZjucd5SE",
+	            "X-Parse-REST-API-Key": "TC3nNk6nae1COCn0bZJ0XE76KBT4F5eR4Pm3gPWR"
+	        }
+    	})
+	.done(function(resp) {
+	        markers.clearLayers();
+	        var r = JSON.parse(resp)
+	        r = JSON.parse(r.result)
+	        makePoints(r.aggregations.zoom.buckets);
+    	})
+    	.fail(function(error) {
+        	console.log(error)
+    	});
+        /*Parse.initialize("OjImjwifOD5EladE5585UAS3CJGy7ednZjucd5SE", "6CE4fybH3Cg4fiqbvxsAE8osmX6MsEIWou0Kudr9");
         Parse.Cloud.run('search', d, {
           success: function(resp) {
             markers.clearLayers();
@@ -101,7 +121,7 @@
           error: function(error) {
             console.log(error)
           }
-        });
+        });*/
    }
 
 </script>
