@@ -229,6 +229,7 @@
 	.done(function(resp) {
 	        markers.clearLayers();
 	        var r = JSON.parse(resp)
+	        r = JSON.parse(r.result)
 	        makePoints(r.aggregations.zoom.buckets);
     	})
     	.fail(function(error) {
