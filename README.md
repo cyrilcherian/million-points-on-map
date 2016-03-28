@@ -80,5 +80,79 @@ The elastic query shown under operates on the map bounds(top left, bottom right)
    }
 }
 ```
-For client side read comments in the code [Refer](https://github.com/cyrilcherian/million-points-on-map/blob/master/simpleMap.html#L24-103).
+For client side read comments in the code
+[Refer](https://github.com/cyrilcherian/million-points-on-map/blob/master/simpleMap.html#L24-103).
+
+##### On the client side:
+
+1) First Make a map and add that to map div as shown below:
+```
+    var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+			maxZoom: 9, //set the zoom level as 9
+			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
+		});
+    map = L.map('map', { zoom: 13, layers: [tiles]});
+    map.setView([22.295006, 78.945313], 3);
+```
+
+2) On drag and load event call the search function
+```
+  map.on('load', function(e){search()});//call search on load
+  map.on('zoomend dragend',function(e){search();});//call search on drag end
+```
+3) Make use of marker cluster group plugin to group points. For more [info] (https://github.com/Leaflet/Leaflet.markercluster)
+
+```
+ markers = L.markerClusterGroup({
+    chunkedLoading: true,
+    spiderfyOnMaxZoom: true,//spiderify effect when many points have same lat/lon
+    showCoverageOnHover: true,
+    iconCreateFunction: function(cluster) {
+        //Grouping the cluster returned by the server, if 
+        var markers = cluster.getAllChildMarkers();
+        var markerCount = 0;
+        markers.forEach(function(m){markerCount = markerCount + m.count;});
+        return new L.DivIcon({ html: '<div class=" clustergroup0 leaflet-marker-icon marker-cluster marker-cluster-medium leaflet-zoom-animated leaflet-clickable" tabindex="0" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; z-index: 233;"><div><span>'+markerCount+'</span></div></div>' });
+        }
+    });
+    map.addLayer(markers);
+```
+
+4) The search function which will get called on loading and on drag. This makes an elastic search call for a given boundary.
+
+Following will get the boundary of the map we have on our view port.
+
+```
+  var b = map.getBounds();
+  var b1 = {
+      "trlat": b.getNorthWest().lat,
+      "trlon": b.getNorthWest().lng, 
+      "bllat": b.getSouthEast().lat, 
+      "bllon": b.getSouthEast().lng
+  }
+```
+Set the zoom level:
+
+```
+  //Get the zoom level
+    var zoom = 3;
+    if(map.getZoom() >= 5 && map.getZoom() <= 8){
+        zoom =4;
+    }
+    else if(map.getZoom() >= 9 && map.getZoom() <= 11){
+        zoom =5;
+    }
+    else if(map.getZoom() >= 12 && map.getZoom() <= 14){
+        zoom =6;
+    }
+    else if(map.getZoom() >= 15 && map.getZoom() <= 17){
+        zoom =7;
+    }
+    else if(map.getZoom() >= 18){
+        zoom =8;
+    }
+```
+
+Next call the elastic search with zoom and bounding box details as described [here](#Elastic Index details)
+
 
