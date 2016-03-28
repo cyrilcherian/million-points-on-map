@@ -80,8 +80,6 @@ The elastic query shown under operates on the map bounds(top left, bottom right)
    }
 }
 ```
-For client side read comments in the code
-[Refer](https://github.com/cyrilcherian/million-points-on-map/blob/gh-pages/simpleMap.html#L24-103).
 
 ##### On the client side:
 
@@ -155,4 +153,5 @@ Set the zoom level:
 
 Next call the elastic search with zoom and bounding box details as described [here](#elastic-index-details)
 
+For client side code [Refer](https://github.com/cyrilcherian/million-points-on-map/blob/gh-pages/simpleMap.html#L26-103).
 
