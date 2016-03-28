@@ -153,6 +153,6 @@ Set the zoom level:
     }
 ```
 
-Next call the elastic search with zoom and bounding box details as described [here](#Elastic Index details)
+Next call the elastic search with zoom and bounding box details as described [here](#elastic-index-details)
 
 
