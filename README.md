@@ -62,8 +62,8 @@ The elastic query shown under operates on the map bounds(top left, bottom right)
                      "lon":p.bounds.trlon //top right longitude
                   },
                   "bottom_right":{
-                     "lat":p.bounds.bllat,//bottom right latitude
-                     "lon":p.bounds.bllon//bottom right longitude
+                     "lat":p.bounds.bllat,//bottom left latitude
+                     "lon":p.bounds.bllon//bottom left longitude
                   }
                }
             }
